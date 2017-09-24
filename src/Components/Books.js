@@ -4,7 +4,7 @@ import Book from './Book';
 
 class Books extends Component {
   render() {
-    const { books, moveBook, bookAction } = this.props;
+    const { books, upsertBook, bookAction } = this.props;
 
     if (!books.length) {
       return <div>There are no books to display</div>;
@@ -14,7 +14,7 @@ class Books extends Component {
       <ol className="books-grid">
         {books.map((book, key) => (
           <li key={key}>
-            <Book {...book} moveBook={moveBook} bookAction={bookAction} />
+            <Book {...book} upsertBook={upsertBook} bookAction={bookAction} />
           </li>
         ))}
       </ol>
@@ -24,7 +24,7 @@ class Books extends Component {
 
 Books.propTypes = {
   books: PropTypes.array.isRequired,
-  moveBook: PropTypes.func.isRequired,
+  upsertBook: PropTypes.func.isRequired,
   bookAction: PropTypes.string
 };
 

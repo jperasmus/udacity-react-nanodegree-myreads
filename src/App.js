@@ -19,7 +19,7 @@ class BooksApp extends React.Component {
       fetchingBooksFailed: false
     };
 
-    this.moveBook = this.moveBook.bind(this);
+    this.upsertBook = this.upsertBook.bind(this);
   }
 
   componentDidMount() {
@@ -41,12 +41,12 @@ class BooksApp extends React.Component {
   }
 
   /**
-   * @description Move a book from one shelf to another.
+   * @description Move a book from one shelf to another or handle new books added.
    * @param {object} book
    * @param {string} oldShelf
    * @param {string} newShelf
    */
-  moveBook(book, oldShelf, newShelf, action = 'move') {
+  upsertBook(book, oldShelf, newShelf, action = 'move') {
     const allBooks = this.state.currentlyReading.concat(this.state.wantToRead, this.state.read);
     const alreadyInMyReads = allBooks.find(shelfBook => shelfBook.id === book.id);
 
@@ -101,9 +101,9 @@ class BooksApp extends React.Component {
         <Route
           exact
           path="/"
-          render={() => <ListBooks moveBook={this.moveBook} {...this.state} />}
+          render={() => <ListBooks upsertBook={this.upsertBook} {...this.state} />}
         />
-        <Route path="/search" render={() => <SearchBooks moveBook={this.moveBook} />} />
+        <Route path="/search" render={() => <SearchBooks upsertBook={this.upsertBook} />} />
         <ToastContainer hideProgressBar={false} newestOnTop={true} />
       </div>
     );

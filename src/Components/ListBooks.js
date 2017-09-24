@@ -11,7 +11,7 @@ class ListBooks extends Component {
       currentlyReading,
       wantToRead,
       read,
-      moveBook
+      upsertBook
     } = this.props;
     let Content;
 
@@ -24,9 +24,9 @@ class ListBooks extends Component {
     } else {
       Content = () => (
         <div>
-          <Bookshelf title="Currently Reading" books={currentlyReading} moveBook={moveBook} />
-          <Bookshelf title="Want to Read" books={wantToRead} moveBook={moveBook} />
-          <Bookshelf title="Read" books={read} moveBook={moveBook} />
+          <Bookshelf title="Currently Reading" books={currentlyReading} upsertBook={upsertBook} />
+          <Bookshelf title="Want to Read" books={wantToRead} upsertBook={upsertBook} />
+          <Bookshelf title="Read" books={read} upsertBook={upsertBook} />
         </div>
       );
     }

@@ -62,7 +62,7 @@ class SearchBooks extends Component {
             <div className="search-books-results-meta">
               Displaying {this.state.count} books for <em>"{this.state.keyword}"</em>
             </div>
-            <Books books={this.state.results} moveBook={this.props.moveBook} bookAction="add" />
+            <Books books={this.state.results} upsertBook={this.props.upsertBook} bookAction="add" />
           </div>
         ) : (
           <div className="search-books-results-meta">No books to display</div>
