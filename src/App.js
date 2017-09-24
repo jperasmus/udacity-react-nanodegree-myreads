@@ -44,19 +44,20 @@ class BooksApp extends React.Component {
    * @param {string} oldShelf
    * @param {string} newShelf
    */
-  moveBook(book, oldShelf, newShelf) {
-    this.setState(state => {
-      const updatedState = {
-        [newShelf]: state[newShelf].concat([{ ...book, ...{ shelf: newShelf } }])
-      };
+  moveBook(book, oldShelf, newShelf, action = 'move') {
+    const allBooks = this.state.currentlyReading.concat(this.state.wantToRead, this.state.read);
+    const alreadyInMyReads = allBooks.find(shelfBook => shelfBook.id === book.id);
 
-      // When adding new books, they don't have an existing shelf
-      if (oldShelf) {
-        updatedState[oldShelf] = state[oldShelf].filter(shelfBook => shelfBook.id !== book.id);
-      }
+    if (action === 'move' || !alreadyInMyReads) {
+      this.setState(state => {
+        const updatedState = {
+          [newShelf]: state[newShelf].concat([{ ...book, ...{ shelf: newShelf } }])
+        };
 
-      return updatedState;
-    });
+        // When adding new books, they don't have an existing shelf
+        if (oldShelf && oldShelf !== 'none') {
+          updatedState[oldShelf] = state[oldShelf].filter(shelfBook => shelfBook.id !== book.id);
+        }
 
     BooksAPI.update(book, newShelf)
       .then(() => {}) // All good, we've already optimistically moved the book to its new shelf
@@ -73,7 +74,7 @@ class BooksApp extends React.Component {
 
           return updatedState;
         });
-      });
+    }
   }
 
   render() {
