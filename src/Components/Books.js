@@ -4,12 +4,12 @@ import Book from './Book';
 
 class Books extends Component {
   render() {
-    const { books } = this.props;
+    const { books, moveBook } = this.props;
     return (
       <ol className="books-grid">
         {books.map((book, key) => (
           <li key={key}>
-            <Book {...book} />
+            <Book {...book} moveBook={moveBook} />
           </li>
         ))}
       </ol>
@@ -18,7 +18,8 @@ class Books extends Component {
 }
 
 Books.propTypes = {
-  books: PropTypes.array.isRequired
+  books: PropTypes.array.isRequired,
+  moveBook: PropTypes.func.isRequired
 };
 
 export default Books;
