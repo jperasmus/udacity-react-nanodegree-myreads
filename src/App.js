@@ -1,9 +1,11 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import SearchBooks from './Components/SearchBooks';
 import ListBooks from './Components/ListBooks';
 import * as BooksAPI from './BooksAPI';
 import './App.css';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 class BooksApp extends React.Component {
   constructor(props) {
@@ -59,21 +61,37 @@ class BooksApp extends React.Component {
           updatedState[oldShelf] = state[oldShelf].filter(shelfBook => shelfBook.id !== book.id);
         }
 
-    BooksAPI.update(book, newShelf)
-      .then(() => {}) // All good, we've already optimistically moved the book to its new shelf
-      .catch(() => {
-        // The update failed, we need to move the book back to its previous shelf
-        this.setState(state => {
-          const updatedState = {
-            [oldShelf]: state[oldShelf].concat([{ ...book, ...{ shelf: oldShelf } }])
-          };
+        return updatedState;
+      });
 
-          if (newShelf) {
-            updatedState[newShelf] = state[newShelf].filter(shelfBook => shelfBook.id !== book.id);
-          }
+      BooksAPI.update(book, newShelf)
+        .then(() => {
+          toast.success(
+            `Book successfully ${action === 'move' ? 'moved to shelf' : 'added to book list'}`
+          );
+        }) // All good, we've already optimistically moved the book to its new shelf
+        .catch(() => {
+          toast.error(
+            `Book could not be ${action === 'move' ? 'moved to shelf' : 'added to book list'}`
+          );
 
-          return updatedState;
+          // The update failed, we need to move the book back to its previous shelf
+          this.setState(state => {
+            const updatedState = {
+              [oldShelf]: state[oldShelf].concat([{ ...book, ...{ shelf: oldShelf } }])
+            };
+
+            if (newShelf && newShelf !== 'none') {
+              updatedState[newShelf] = state[newShelf].filter(
+                shelfBook => shelfBook.id !== book.id
+              );
+            }
+
+            return updatedState;
+          });
         });
+    } else {
+      toast.warn('This book is already added!');
     }
   }
 
@@ -86,6 +104,7 @@ class BooksApp extends React.Component {
           render={() => <ListBooks moveBook={this.moveBook} {...this.state} />}
         />
         <Route path="/search" render={() => <SearchBooks moveBook={this.moveBook} />} />
+        <ToastContainer hideProgressBar={false} newestOnTop={true} />
       </div>
     );
   }

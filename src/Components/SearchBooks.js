@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
+import { toast } from "react-toastify";
 import Books from "./Books";
 import { search } from "../BooksAPI";
 
@@ -34,6 +35,7 @@ class SearchBooks extends Component {
       })
       .catch(() => {
         this.setState({ results: [], count: 0, searching: false, searchFailed: true });
+        toast.error("Searching books failed!");
       });
   }, 250);
 
