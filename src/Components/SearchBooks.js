@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import debounce from "lodash.debounce";
-import { toast } from "react-toastify";
-import Books from "./Books";
-import { search } from "../BooksAPI";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import debounce from 'lodash.debounce';
+import { toast } from 'react-toastify';
+import Books from './Books';
+import { search } from '../BooksAPI';
 
 class SearchBooks extends Component {
   constructor(props) {
@@ -12,12 +12,13 @@ class SearchBooks extends Component {
     this.state = {
       results: [],
       count: 0,
-      keyword: "",
+      keyword: '',
       searching: false,
       searchFailed: false
     };
   }
 
+  // eslint-disable-next-line no-undef
   handleInputChange = debounce(keyword => {
     // Not handling the event where the keyword is empty because we're defaulting to an empty array below
 
@@ -35,7 +36,7 @@ class SearchBooks extends Component {
       })
       .catch(() => {
         this.setState({ results: [], count: 0, searching: false, searchFailed: true });
-        toast.error("Searching books failed!");
+        toast.error('Searching books failed!');
       });
   }, 250);
 
