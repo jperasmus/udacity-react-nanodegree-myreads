@@ -10,12 +10,15 @@ const Book = props => {
         <div
           className="book-cover"
           style={{
-            width: 128,
-            height: 193,
+            width: 140,
+            height: 200,
             backgroundImage: `url("${thumbnail}")`
           }}
         />
         <div className="book-shelf-changer">
+          <svg fill="#fff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 10l5 5 5-5z" />
+          </svg>
           <select value={shelf} onChange={e => upsertBook(props, shelf, e.target.value)}>
             <option value="none" disabled>
               Move to...

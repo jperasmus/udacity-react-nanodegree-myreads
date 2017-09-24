@@ -8,7 +8,7 @@ body {
 }
 body,
 .app {
-  background: #fff;
+  background: #eee;
 }
 
 /* main page */
@@ -22,6 +22,7 @@ body,
   font-weight: 400;
   margin: 0;
   color: #fff;
+  font-family: "Fredericka the Great", cursive;
 }
 
 .list-books-content {
@@ -50,7 +51,8 @@ body,
 }
 
 .bookshelf-title {
-  border-bottom: 1px solid #dedede;
+  text-align: center;
+  font: 28px "Fredericka the Great", cursive;
 }
 .bookshelf-books {
   text-align: center;
@@ -60,19 +62,32 @@ body,
   position: fixed;
   right: 10px;
   top: 10px;
+  border-radius: 50%;
+  background: #1547ed;
+  background: -moz-linear-gradient(-45deg, #1547ed 0%, #df103e 100%);
+  background: -webkit-linear-gradient(-45deg, #1547ed 0%, #df103e 100%);
+  background: linear-gradient(135deg, #1547ed 0%, #df103e 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(
+      startColorstr="#1547ed",
+      endColorstr="#df103e",
+      GradientType=1
+    );
+  transition: all 0.3s ease;
 }
 .open-search a {
   display: block;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #2e7d32;
   background-image: url("./icons/add.svg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 28px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   font-size: 0;
+}
+.open-search:hover {
+  transform: scale(1.1);
 }
 
 /* search page */
@@ -167,23 +182,49 @@ body,
 
 .book-shelf-changer {
   position: absolute;
-  right: 0;
+  right: -15px;
   bottom: -10px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #60ac5d;
-  background-image: url("./icons/arrow-drop-down.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 20px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.book-shelf-changer > svg {
+  position: absolute;
+}
+
+.book-shelf-changer:before {
+  transition: all 0.3s ease;
+  content: "";
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1547ed;
+  background: -moz-linear-gradient(-45deg, #1547ed 0%, #df103e 100%);
+  background: -webkit-linear-gradient(-45deg, #1547ed 0%, #df103e 100%);
+  background: linear-gradient(135deg, #1547ed 0%, #df103e 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(
+      startColorstr="#1547ed",
+      endColorstr="#df103e",
+      GradientType=1
+    );
+}
+
+.book-shelf-changer:hover:before {
+  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  opacity: 0.95;
 }
 .book-shelf-changer select {
   width: 100%;
   height: 100%;
   opacity: 0;
   cursor: pointer;
+  z-index: 5;
+  display: block;
 }
 
 /* book cover */
@@ -191,7 +232,15 @@ body,
 .book-cover {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   background: #eee;
+  border: 10px solid #222;
+  -webkit-filter: grayscale(1);
+  filter: grayscale(1);
 }
+.book-top:hover .book-cover {
+  -webkit-filter: none;
+  filter: none;
+}
+
 .book-cover-title {
   padding: 20px 10px 0;
   text-align: center;
