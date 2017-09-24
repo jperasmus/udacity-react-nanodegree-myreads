@@ -1,9 +1,48 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Books from './Books';
+import { search } from '../BooksAPI';
 
 class SearchBooks extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      results: [],
+      searching: false,
+      searchFailed: false
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  handleInputChange(e) {
+    const keyword = e.target.value;
+    this.setState({
+      searching: true,
+      searchFailed: false
+    });
+
+    search(keyword, 200)
+      .then(results => {
+        this.setState({ results, searching: false });
+      })
+      .catch(() => {
+        this.setState({ results: [], searching: false, searchFailed: true });
+      });
+  }
+
   render() {
+    let Results;
+
+    if (this.state.searchFailed) {
+      Results = () => <div>Searching failed :(</div>;
+    } else if (this.state.searching) {
+      Results = () => <div>Finding some books quick...</div>;
+    } else {
+      Results = () => <Books books={this.state.results} moveBook={this.props.moveBook} />;
+    }
+
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -19,11 +58,15 @@ class SearchBooks extends Component {
               However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
               you don't find a specific author or title. Every search is limited by search terms.
             */}
-            <input type="text" placeholder="Search by title or author" />
+            <input
+              type="text"
+              placeholder="Search by title or author"
+              onChange={this.handleInputChange}
+            />
           </div>
         </div>
         <div className="search-books-results">
-          <Books books={this.state.results} />
+          <Results />
         </div>
       </div>
     );

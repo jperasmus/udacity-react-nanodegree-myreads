@@ -16,7 +16,7 @@ const Book = props => {
           }}
         />
         <div className="book-shelf-changer">
-          <select defaultValue={shelf} onChange={e => moveBook(props, shelf, e.target.value)}>
+          <select value={shelf} onChange={e => moveBook(props, shelf, e.target.value)}>
             <option value="none" disabled>
               Move to...
             </option>
@@ -31,6 +31,16 @@ const Book = props => {
       <div className="book-authors">{authors.join(', ')}</div>
     </div>
   );
+};
+
+Book.defaultProps = {
+  title: '',
+  authors: [],
+  shelf: 'none',
+  imageLinks: {
+    smallThumbnail: '',
+    thumbnail: ''
+  }
 };
 
 Book.propTypes = {
