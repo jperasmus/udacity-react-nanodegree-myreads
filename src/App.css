@@ -8,20 +8,20 @@ body {
 }
 body,
 .app {
-  background: white;
+  background: #fff;
 }
 
 /* main page */
 
 .list-books-title {
   padding: 10px 0;
-  background: #2e7c31;
+  background: #222;
   text-align: center;
 }
 .list-books-title h1 {
   font-weight: 400;
   margin: 0;
-  color: white;
+  color: #fff;
 }
 
 .list-books-content {
@@ -58,8 +58,8 @@ body,
 
 .open-search {
   position: fixed;
-  right: 25px;
-  bottom: 25px;
+  right: 10px;
+  top: 10px;
 }
 .open-search a {
   display: block;
@@ -85,10 +85,10 @@ body,
   z-index: 1;
   display: flex;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 0 6px rgba(0, 0, 0, 0.23);
+  background: #222;
 }
 .search-books-input-wrapper {
   flex: 1;
-  background: #e9e;
 }
 .search-books-bar input {
   width: 100%;
@@ -96,6 +96,8 @@ body,
   font-size: 1.25em;
   border: none;
   outline: none;
+  background: transparent;
+  color: #fff;
 }
 
 .close-search {
@@ -104,7 +106,7 @@ body,
   left: 15px;
   width: 50px;
   height: 53px;
-  background: white;
+  background: transparent;
   background-image: url("./icons/arrow-back.svg");
   background-position: center;
   background-repeat: no-repeat;
