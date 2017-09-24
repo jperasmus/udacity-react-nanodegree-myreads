@@ -46,15 +46,19 @@ class BooksApp extends React.Component {
    * @param {string} oldShelf
    * @param {string} newShelf
    */
-  upsertBook(book, oldShelf, newShelf, action = 'move') {
-    const allBooks = this.state.currentlyReading.concat(this.state.wantToRead, this.state.read);
-    const alreadyInMyReads = allBooks.find(shelfBook => shelfBook.id === book.id);
+  upsertBook(book, oldShelf, newShelf) {
+    const newBook = oldShelf === 'none';
+    const removingBook = newShelf === 'none';
+    const books = this.state[newShelf];
+    const existAlready = books && books.find(shelfBook => shelfBook.id === book.id);
 
-    if (action === 'move' || !alreadyInMyReads) {
+    if (!existAlready) {
       this.setState(state => {
-        const updatedState = {
-          [newShelf]: state[newShelf].concat([{ ...book, ...{ shelf: newShelf } }])
-        };
+        const updatedState = {};
+
+        if (!removingBook) {
+          updatedState[newShelf] = state[newShelf].concat([{ ...book, ...{ shelf: newShelf } }]);
+        }
 
         // When adding new books, they don't have an existing shelf
         if (oldShelf && oldShelf !== 'none') {
@@ -66,20 +70,23 @@ class BooksApp extends React.Component {
 
       BooksAPI.update(book, newShelf)
         .then(() => {
-          toast.success(
-            `Book successfully ${action === 'move' ? 'moved to shelf' : 'added to book list'}`
-          );
+          const successMessage = `Book successfully ${newBook
+            ? 'added to book list'
+            : removingBook ? 'removed.' : 'moved to shelf'}`;
+          toast.success(successMessage);
         }) // All good, we've already optimistically moved the book to its new shelf
         .catch(() => {
-          toast.error(
-            `Book could not be ${action === 'move' ? 'moved to shelf' : 'added to book list'}`
-          );
+          toast.error(`Book could not be ${!newBook ? 'moved to shelf' : 'added to book list'}`);
 
           // The update failed, we need to move the book back to its previous shelf
           this.setState(state => {
-            const updatedState = {
-              [oldShelf]: state[oldShelf].concat([{ ...book, ...{ shelf: oldShelf } }])
-            };
+            const updatedState = {};
+
+            if (!removingBook) {
+              updatedState[oldShelf] = state[oldShelf].concat([
+                { ...book, ...{ shelf: oldShelf } }
+              ]);
+            }
 
             if (newShelf && newShelf !== 'none') {
               updatedState[newShelf] = state[newShelf].filter(
