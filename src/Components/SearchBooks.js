@@ -1,73 +1,42 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import debounce from 'lodash.debounce';
-import { toast } from 'react-toastify';
-import Books from './Books';
-import { search } from '../BooksAPI';
+import Bookshelf from './Bookshelf';
 
 class SearchBooks extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      results: [],
-      count: 0,
-      keyword: '',
-      searching: false,
-      searchFailed: false
-    };
-  }
-
   // eslint-disable-next-line no-undef
   handleInputChange = debounce(keyword => {
-    // Not handling the event where the keyword is empty because we're defaulting to an empty array below
-
-    this.setState({
-      searching: true,
-      searchFailed: false,
-      keyword
-    });
-
-    search(keyword, 10) // NOTE: The search maxResults property doesn't actually do anything, always defaults to 20
-      .then(response => {
-        const results = Array.isArray(response) ? response : [];
-        const count = results.length;
-        this.setState({ results, count, searching: false });
-      })
-      .catch(() => {
-        this.setState({ results: [], count: 0, searching: false, searchFailed: true });
-        toast.error('Searching books failed!');
-      });
+    this.props.searchForBooks(keyword);
   }, 250);
 
   render() {
     let Results;
+    const {
+      upsertBook,
+      currentlyReading,
+      wantToRead,
+      read,
+      none,
+      searchKeyword,
+      searchingBooks,
+      searchingBooksFailed
+    } = this.props;
 
-    if (this.state.searchFailed) {
+    if (searchingBooksFailed) {
       Results = () => (
         <div className="search-books-results-meta">
-          Searching for <em>"{this.state.keyword}"</em> failed :(
+          Searching for <em>"{searchKeyword}"</em> failed :(
         </div>
       );
-    } else if (this.state.searching) {
+    } else if (searchingBooks) {
       Results = () => (
         <div className="search-books-results-meta">
-          Searching for books matching <em>"{this.state.keyword}"</em>
+          Searching for books matching <em>"{searchKeyword}"</em>
         </div>
       );
     } else {
-      Results = () => {
-        return this.state.keyword && this.state.count ? (
-          <div>
-            <div className="search-books-results-meta">
-              Displaying {this.state.count} books for <em>"{this.state.keyword}"</em>
-            </div>
-            <Books books={this.state.results} upsertBook={this.props.upsertBook} />
-          </div>
-        ) : (
-          <div className="search-books-results-meta">No books to display</div>
-        );
-      };
+      Results = () => <Bookshelf title="Available Books" books={none} upsertBook={upsertBook} />;
     }
 
     return (
@@ -80,6 +49,7 @@ class SearchBooks extends Component {
             <input
               type="text"
               placeholder="Search by title or author"
+              defaultValue={searchKeyword}
               onChange={({ target: { value } }) => this.handleInputChange(value)}
               autoFocus
             />
@@ -87,10 +57,25 @@ class SearchBooks extends Component {
         </div>
         <div className="search-books-results">
           <Results />
+          <Bookshelf title="Currently Reading" books={currentlyReading} upsertBook={upsertBook} />
+          <Bookshelf title="Want to Read" books={wantToRead} upsertBook={upsertBook} />
+          <Bookshelf title="Read" books={read} upsertBook={upsertBook} />
         </div>
       </div>
     );
   }
 }
+
+SearchBooks.propTypes = {
+  upsertBook: PropTypes.func.isRequired,
+  searchForBooks: PropTypes.func.isRequired,
+  currentlyReading: PropTypes.array.isRequired,
+  wantToRead: PropTypes.array.isRequired,
+  read: PropTypes.array.isRequired,
+  none: PropTypes.array.isRequired,
+  searchKeyword: PropTypes.string.isRequired,
+  searchingBooks: PropTypes.bool.isRequired,
+  searchingBooksFailed: PropTypes.bool.isRequired
+};
 
 export default SearchBooks;

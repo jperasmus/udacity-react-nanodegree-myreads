@@ -15,11 +15,16 @@ class BooksApp extends React.Component {
       currentlyReading: [],
       wantToRead: [],
       read: [],
+      none: [], // Search results
       fetchingBooks: true,
-      fetchingBooksFailed: false
+      fetchingBooksFailed: false,
+      searchKeyword: '',
+      searchingBooks: false,
+      searchingBooksFailed: false
     };
 
     this.upsertBook = this.upsertBook.bind(this);
+    this.searchForBooks = this.searchForBooks.bind(this);
   }
 
   componentDidMount() {
@@ -46,59 +51,61 @@ class BooksApp extends React.Component {
    * @param {string} oldShelf
    * @param {string} newShelf
    */
-  upsertBook(book, oldShelf, newShelf) {
+  async upsertBook(book, oldShelf, newShelf) {
     const newBook = oldShelf === 'none';
     const removingBook = newShelf === 'none';
     const books = this.state[newShelf];
     const existAlready = books && books.find(shelfBook => shelfBook.id === book.id);
 
     if (!existAlready) {
-      this.setState(state => {
-        const updatedState = {};
+      try {
+        await BooksAPI.update(book, newShelf);
+        this.setState(state => ({
+          [newShelf]: state[newShelf].concat([{ ...book, ...{ shelf: newShelf } }]),
+          [oldShelf]: state[oldShelf].filter(shelfBook => shelfBook.id !== book.id)
+        }));
 
-        if (!removingBook) {
-          updatedState[newShelf] = state[newShelf].concat([{ ...book, ...{ shelf: newShelf } }]);
-        }
+        const successMessage = `Book successfully ${newBook
+          ? 'added to book list'
+          : removingBook ? 'removed.' : 'moved to shelf'}`;
 
-        // When adding new books, they don't have an existing shelf
-        if (oldShelf && oldShelf !== 'none') {
-          updatedState[oldShelf] = state[oldShelf].filter(shelfBook => shelfBook.id !== book.id);
-        }
-
-        return updatedState;
-      });
-
-      BooksAPI.update(book, newShelf)
-        .then(() => {
-          const successMessage = `Book successfully ${newBook
-            ? 'added to book list'
-            : removingBook ? 'removed.' : 'moved to shelf'}`;
-          toast.success(successMessage);
-        }) // All good, we've already optimistically moved the book to its new shelf
-        .catch(() => {
-          toast.error(`Book could not be ${!newBook ? 'moved to shelf' : 'added to book list'}`);
-
-          // The update failed, we need to move the book back to its previous shelf
-          this.setState(state => {
-            const updatedState = {};
-
-            if (!removingBook) {
-              updatedState[oldShelf] = state[oldShelf].concat([
-                { ...book, ...{ shelf: oldShelf } }
-              ]);
-            }
-
-            if (newShelf && newShelf !== 'none') {
-              updatedState[newShelf] = state[newShelf].filter(
-                shelfBook => shelfBook.id !== book.id
-              );
-            }
-
-            return updatedState;
-          });
-        });
+        toast.success(successMessage);
+      } catch (error) {
+        toast.error(`Book could not be ${!newBook ? 'moved to shelf' : 'added to book list'}`);
+      }
     } else {
       toast.warn('This book is already added!');
+    }
+  }
+
+  /**
+   * @description Takes in a keyword to search for, makes a network request to find books matching the keyword.
+   * @param {string} searchKeyword
+   * @returns {promise} Sets the app state based on search results
+   */
+  async searchForBooks(searchKeyword) {
+    // Not handling the event where the keyword is empty because we're defaulting to an empty array below
+
+    this.setState({
+      searchingBooks: true,
+      searchingBooksFailed: false,
+      searchKeyword
+    });
+
+    try {
+      const response = await BooksAPI.search(searchKeyword, 10); // NOTE: The search maxResults property doesn't actually do anything, always defaults to 20
+      const results = Array.isArray(response) ? response : [];
+      const allBookIDs = this.state.currentlyReading
+        .concat(this.state.wantToRead, this.state.read)
+        .map(book => book.id);
+
+      this.setState({
+        none: results.filter(book => !allBookIDs.includes(book.id)),
+        searchingBooks: false
+      });
+    } catch (error) {
+      this.setState({ none: [], searchingBooks: false, searchingBooksFailed: true });
+      toast.error('Searching books failed!');
     }
   }
 
@@ -110,7 +117,16 @@ class BooksApp extends React.Component {
           path="/"
           render={() => <ListBooks upsertBook={this.upsertBook} {...this.state} />}
         />
-        <Route path="/search" render={() => <SearchBooks upsertBook={this.upsertBook} />} />
+        <Route
+          path="/search"
+          render={() => (
+            <SearchBooks
+              upsertBook={this.upsertBook}
+              searchForBooks={this.searchForBooks}
+              {...this.state}
+            />
+          )}
+        />
         <ToastContainer hideProgressBar={false} newestOnTop={true} />
       </div>
     );

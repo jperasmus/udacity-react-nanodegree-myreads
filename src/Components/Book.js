@@ -19,7 +19,22 @@ const Book = props => {
           <svg fill="#fff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M7 10l5 5 5-5z" />
           </svg>
-          <select value={shelf} onChange={e => upsertBook(props, shelf, e.target.value)}>
+          <select
+            value={shelf}
+            onChange={e => {
+              const target = e.target || e.srcElement;
+              const { parentElement } = target;
+              parentElement.classList.add('moving');
+
+              upsertBook(props, shelf, e.target.value)
+                .then(() => {
+                  parentElement.classList.remove('moving');
+                })
+                .catch(() => {
+                  parentElement.classList.remove('moving');
+                });
+            }}
+          >
             <option value="none" disabled>
               Move to...
             </option>
