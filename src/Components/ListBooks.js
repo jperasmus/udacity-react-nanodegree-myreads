@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ListBooksTitle from './ListBooksTitle';
 import Bookshelf from './Bookshelf';
@@ -41,6 +42,15 @@ const ListBooks = props => {
       </div>
     </div>
   );
+};
+
+ListBooks.propTypes = {
+  upsertBook: PropTypes.func.isRequired,
+  currentlyReading: PropTypes.array.isRequired,
+  wantToRead: PropTypes.array.isRequired,
+  read: PropTypes.array.isRequired,
+  fetchingBooks: PropTypes.bool.isRequired,
+  fetchingBooksFailed: PropTypes.bool.isRequired
 };
 
 export default ListBooks;
