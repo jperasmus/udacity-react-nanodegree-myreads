@@ -57,7 +57,7 @@ Book.defaultProps = {
   shelf: 'none',
   imageLinks: {
     smallThumbnail: '',
-    thumbnail: ''
+    thumbnail: 'http://via.placeholder.com/128x193?text=No%20Image'
   }
 };
 
