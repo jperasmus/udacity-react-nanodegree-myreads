@@ -11,8 +11,8 @@ const Books = props => {
 
   return (
     <ol className="books-grid">
-      {books.map((book, key) => (
-        <li key={key}>
+      {books.map(book => (
+        <li key={book.id}>
           <Book {...book} upsertBook={upsertBook} />
         </li>
       ))}
