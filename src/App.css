@@ -251,3 +251,38 @@ body,
   text-align: center;
   font-size: 0.8em;
 }
+
+.centered {
+  text-align: center;
+}
+
+.button {
+  font-size: 20px;
+  display: inline-block;
+  padding: 15px;
+  margin: 30px 0 0;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  transition: all 0.25s ease;
+  background: #1547ed;
+  background: -moz-linear-gradient(-45deg, #1547ed 0%, #df103e 100%);
+  background: -webkit-linear-gradient(-45deg, #1547ed 0%, #df103e 100%);
+  background: linear-gradient(135deg, #1547ed 0%, #df103e 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(
+      startColorstr="#1547ed",
+      endColorstr="#df103e",
+      GradientType=1
+    );
+}
+
+.button > svg {
+  fill: #fff;
+  height: 20px;
+  padding: 5px 5px 0 0;
+}
+
+.button:hover {
+  box-shadow: 0 10px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  opacity: 0.95;
+}

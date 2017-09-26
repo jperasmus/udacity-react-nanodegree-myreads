@@ -1,8 +1,9 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import SearchBooks from './Components/SearchBooks';
 import ListBooks from './Components/ListBooks';
+import Error404 from './Components/Error404';
 import * as BooksAPI from './BooksAPI';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -112,21 +113,24 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-        <Route
-          exact
-          path="/"
-          render={() => <ListBooks upsertBook={this.upsertBook} {...this.state} />}
-        />
-        <Route
-          path="/search"
-          render={() => (
-            <SearchBooks
-              upsertBook={this.upsertBook}
-              searchForBooks={this.searchForBooks}
-              {...this.state}
-            />
-          )}
-        />
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={() => <ListBooks upsertBook={this.upsertBook} {...this.state} />}
+          />
+          <Route
+            path="/search"
+            render={() => (
+              <SearchBooks
+                upsertBook={this.upsertBook}
+                searchForBooks={this.searchForBooks}
+                {...this.state}
+              />
+            )}
+          />
+          <Route component={Error404} />
+        </Switch>
         <ToastContainer hideProgressBar={false} newestOnTop={true} />
       </div>
     );
